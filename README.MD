@@ -22,7 +22,8 @@ We have a bunch of adding to do:
 dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design --version 3.1.4
 dotnet add package Microsoft.EntityFrameworkCore.Design --version 3.1.10
 dotnet tool install --global dotnet-aspnet-codegenerator --version 3.1.4
-dotnet aspnet-codegenerator controller -name VatsimMETARController -async -api -m METARStation -dc WebApiDbContext -outDir Controllers
+dotnet aspnet-codegenerator controller -name NOAAStationsController -async -api -m NOAAtation -dc WebApiDbContext -outDir Controllers
+dotnet aspnet-codegenerator controller -name VatsimMETARController -async -api -m VatsimMETAR -dc WebApiDbContext -outDir Controllers
 ```
 
 We'll test against this api.
@@ -44,4 +45,3 @@ XUnit for unit testing.
 Projects:
 * webapi
 * tests
-

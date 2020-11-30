@@ -27,7 +27,7 @@ namespace webapi.Data{
                 }
 
                 Console.WriteLine($"READING FROM STATIONS");
-                List<METARStation> stationList = METARStation.GetMETARStationsList();
+                List<NOAAStation> stationList = NOAAStation.GetNOAAStationsList();
 
                 Console.WriteLine($"FINDING DUPLICATES");
                 // as it turns out, there are duplicates in the data
@@ -43,7 +43,7 @@ namespace webapi.Data{
                 //re-insert the one
                 Console.WriteLine($"REMOVING DUPLICATES");                
                 foreach(var item in duplicates){
-                    METARStation m = stationList.First(s => s.ICAO == item);
+                    NOAAStation m = stationList.First(s => s.ICAO == item);
                     stationList.RemoveAll(s => s.ICAO == item);
                     stationList.Add(m);
                 }                                            

@@ -15,10 +15,10 @@ using Microsoft.EntityFrameworkCore;
 namespace webapi.Models
 {
 
-    public class METARStation
+    public class NOAAStation
     {
 
-        public static readonly string METAR_STATION_SOURCE_URL = "https://aviationweather.gov/docs/metar/stations.txt";
+        public static readonly string NOAA_STATION_SOURCE_URL = "https://aviationweather.gov/docs/metar/stations.txt";
 
         // public static List<METARStation> Stations { get; set; }
 
@@ -39,24 +39,18 @@ namespace webapi.Models
         // public string OfficeType { get; set; }
         // public string PlottingPriority { get; set; }
 
-        //static constructor
-        // static METARStation()
-        // {
-        //     // Stations = GetMETARStationsListAync(METAR_STATION_SOURCE_URL).Result;
-        // }
-
-        public static string GetMETARStationString(string url)
+        public static string GetNOAAStationString(string url)
         {
             HttpClient client = new HttpClient();
             return client.GetStringAsync(url).Result;
         }
 
-        public static List<METARStation> GetMETARStationsList()
+        public static List<NOAAStation> GetNOAAStationsList()
         {
 
-            List<METARStation> stationsList = new List<METARStation>();
+            List<NOAAStation> stationsList = new List<NOAAStation>();
 
-            string stations = GetMETARStationString(METAR_STATION_SOURCE_URL);
+            string stations = GetNOAAStationString(NOAA_STATION_SOURCE_URL);
 
             //credit: https://stackoverflow.com/a/1508217
             var lines = Regex.Split(stations, "\r\n|\r|\n");
@@ -65,7 +59,7 @@ namespace webapi.Models
             {
                 if(line.Length == 83)
                 {
-                    METARStation sta = METARStation.ParseStationLine(line);
+                    NOAAStation sta = NOAAStation.ParseStationLine(line);
                     if(sta.ICAO.Length == 4)
                     {
                         if(!stationsList.Contains(sta))
@@ -81,7 +75,7 @@ namespace webapi.Models
             return stationsList;
         }
 
-        public static METARStation ParseStationLine(string line)
+        public static NOAAStation ParseStationLine(string line)
         {
 
             string output = "";
@@ -107,7 +101,7 @@ namespace webapi.Models
             //     icao = iata;
             // }
 
-            METARStation sta = new METARStation {
+            NOAAStation sta = new NOAAStation {
                 StateAbbreviation = cd,
                 StationName = station,
                 ICAO = icao,
@@ -121,7 +115,7 @@ namespace webapi.Models
             return sta;
         }
 
-        public static async Task<METARStation> ParseStationLineStringAync(string line)
+        public static async Task<NOAAStation> ParseStationLineStringAync(string line)
         {
             return await Task<string>.Run(() => ParseStationLine(line));
         }

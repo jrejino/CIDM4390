@@ -10,7 +10,9 @@ namespace webapi.Data
         {
         }
 
-        public DbSet<METARStation> Stations { get; set; }
+        public DbSet<NOAAStation> Stations { get; set; }
+
+        public DbSet<webapi.Models.VatsimMETAR> VatsimMETAR { get; set; }
 
         // public DbSet<Student> Students { get; set; }
         // public DbSet<Enrollment> Enrollments { get; set; }

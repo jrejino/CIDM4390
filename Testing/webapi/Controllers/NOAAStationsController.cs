@@ -5,55 +5,61 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using webapi.Data;
+using Microsoft.Extensions.Logging;
+
 using webapi.Models;
+using webapi.Data;
 
 namespace webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VatsimMETARController : ControllerBase
+    public class NOAAStationsController : ControllerBase
     {
+        private readonly ILogger<NOAAStationsController> _logger;
         private readonly WebApiDbContext _context;
 
-        public VatsimMETARController(WebApiDbContext context)
+        public NOAAStationsController(ILogger<NOAAStationsController> logger,
+                                     WebApiDbContext context)
         {
+            _logger = logger;
             _context = context;
         }
 
         // GET: api/VatsimMETAR
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<VatsimMETAR>>> GetVatsimMETAR()
+        public async Task<ActionResult<IEnumerable<NOAAStation>>> GetStations()
         {
-            return await _context.VatsimMETAR.ToListAsync();
+            _logger.LogInformation("VatsimMETAR Called");
+            return await _context.Stations.ToListAsync();
         }
 
         // GET: api/VatsimMETAR/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<VatsimMETAR>> GetVatsimMETAR(string id)
+        public async Task<ActionResult<NOAAStation>> GetMETARStation(string id)
         {
-            var vatsimMETAR = await _context.VatsimMETAR.FindAsync(id);
+            var mETARStation = await _context.Stations.FindAsync(id);
 
-            if (vatsimMETAR == null)
+            if (mETARStation == null)
             {
                 return NotFound();
             }
 
-            return vatsimMETAR;
+            return mETARStation;
         }
 
         // PUT: api/VatsimMETAR/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutVatsimMETAR(string id, VatsimMETAR vatsimMETAR)
+        public async Task<IActionResult> PutMETARStation(string id, NOAAStation mETARStation)
         {
-            if (id != vatsimMETAR.RetreivedTimeStamp)
+            if (id != mETARStation.ICAO)
             {
                 return BadRequest();
             }
 
-            _context.Entry(vatsimMETAR).State = EntityState.Modified;
+            _context.Entry(mETARStation).State = EntityState.Modified;
 
             try
             {
@@ -61,7 +67,7 @@ namespace webapi.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VatsimMETARExists(id))
+                if (!METARStationExists(id))
                 {
                     return NotFound();
                 }
@@ -78,16 +84,16 @@ namespace webapi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<VatsimMETAR>> PostVatsimMETAR(VatsimMETAR vatsimMETAR)
+        public async Task<ActionResult<NOAAStation>> PostMETARStation(NOAAStation mETARStation)
         {
-            _context.VatsimMETAR.Add(vatsimMETAR);
+            _context.Stations.Add(mETARStation);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (VatsimMETARExists(vatsimMETAR.RetreivedTimeStamp))
+                if (METARStationExists(mETARStation.ICAO))
                 {
                     return Conflict();
                 }
@@ -97,28 +103,28 @@ namespace webapi.Controllers
                 }
             }
 
-            return CreatedAtAction("GetVatsimMETAR", new { id = vatsimMETAR.RetreivedTimeStamp }, vatsimMETAR);
+            return CreatedAtAction("GetMETARStation", new { id = mETARStation.ICAO }, mETARStation);
         }
 
         // DELETE: api/VatsimMETAR/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<VatsimMETAR>> DeleteVatsimMETAR(string id)
+        public async Task<ActionResult<NOAAStation>> DeleteMETARStation(string id)
         {
-            var vatsimMETAR = await _context.VatsimMETAR.FindAsync(id);
-            if (vatsimMETAR == null)
+            var mETARStation = await _context.Stations.FindAsync(id);
+            if (mETARStation == null)
             {
                 return NotFound();
             }
 
-            _context.VatsimMETAR.Remove(vatsimMETAR);
+            _context.Stations.Remove(mETARStation);
             await _context.SaveChangesAsync();
 
-            return vatsimMETAR;
+            return mETARStation;
         }
 
-        private bool VatsimMETARExists(string id)
+        private bool METARStationExists(string id)
         {
-            return _context.VatsimMETAR.Any(e => e.RetreivedTimeStamp == id);
+            return _context.Stations.Any(e => e.ICAO == id);
         }
     }
 }
