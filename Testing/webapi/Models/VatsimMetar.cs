@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace api
 {
-    public class VatsimMetar
+    public class VatsimMETAR
     {
+        public string raw { get; set; }
     }
 }
