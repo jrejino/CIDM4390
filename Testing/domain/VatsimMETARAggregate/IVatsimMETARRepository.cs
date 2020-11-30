@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace domain
+namespace domain.VatsimMETARAggregate
 {
     public interface IVatsimMETARRepository
     {

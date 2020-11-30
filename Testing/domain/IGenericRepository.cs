@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BookStore.Domain
+namespace domain
 {
     public interface IGenericRepository<T> where T : class
     {
