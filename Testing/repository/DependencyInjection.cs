@@ -16,8 +16,7 @@ namespace repository
 
             services.AddDbContext<WebApiDbContext>(options => options.UseInMemoryDatabase(databaseName: "Weather"));            
             
-            // services.AddDbContext<WebApiDbContext>(opt => opt
-            //     .UseSqlServer("Server=localhost,1433; Database=BooksDB;User Id=sa; Password=password_01;"));
+
             return services;
         }
     }

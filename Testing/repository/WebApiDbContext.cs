@@ -9,23 +9,16 @@ namespace repository
     public class WebApiDbContext : DbContext
     {
         public WebApiDbContext (DbContextOptions<WebApiDbContext> options)
-            : base(options)
-        {
-        }
+            : base(options){}
 
         public DbSet<NOAAStation> Stations { get; set; }
 
-        public DbSet<VatsimMETAR> VatsimMETAR { get; set; }
+        public DbSet<VatsimMETAR> VatsimMETARs { get; set; }
 
-        // public DbSet<Student> Students { get; set; }
-        // public DbSet<Enrollment> Enrollments { get; set; }
-        // public DbSet<Course> Courses { get; set; }
-
-        // protected override void OnModelCreating(ModelBuilder modelBuilder)
-        // {
-        //     modelBuilder.Entity<Course>().ToTable("Course");
-        //     modelBuilder.Entity<Enrollment>().ToTable("Enrollment");
-        //     modelBuilder.Entity<Student>().ToTable("Student");
-        // }
+        protected override void OnModelCreating(ModelBuilder modelBuilder) {
+            modelBuilder.Entity<NOAAStation>().HasKey(n => n.ICAO);
+            //composite key: https://docs.microsoft.com/en-us/ef/core/modeling/keys?tabs=data-annotations
+            modelBuilder.Entity<VatsimMETAR>().HasKey(n => new { n.ICAO, n.RetreivedTimeStamp, n.ObservationTime });
+        }
     }
 }

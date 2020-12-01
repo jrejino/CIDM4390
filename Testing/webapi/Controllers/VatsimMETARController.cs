@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 using domain;
 using domain.VatsimMETARAggregate;
@@ -16,25 +17,29 @@ namespace webapi.Controllers
     [ApiController]
     public class VatsimMETARController : ControllerBase
     {
-        private readonly WebApiDbContext _context;
+        private readonly ILogger<VatsimMETARController> _logger;
+        private readonly IUnitOfWork _unitOfWork;        
 
-        public VatsimMETARController(WebApiDbContext context)
+        public VatsimMETARController(ILogger<VatsimMETARController> logger,
+                                     IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _logger = logger;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/VatsimMETAR
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<VatsimMETAR>>> GetVatsimMETAR()
+        public async Task<IEnumerable<VatsimMETAR>> GetVatsimMETAR()
         {
-            return await _context.VatsimMETAR.ToListAsync();
+            _logger.LogInformation("VatsimMETAR Called");
+            return await _unitOfWork.METARs.GetAll();
         }
 
         // GET: api/VatsimMETAR/5
         [HttpGet("{id}")]
         public async Task<ActionResult<VatsimMETAR>> GetVatsimMETAR(string id)
         {
-            var vatsimMETAR = await _context.VatsimMETAR.FindAsync(id);
+            var vatsimMETAR = await _unitOfWork.METARs.Get(id);
 
             if (vatsimMETAR == null)
             {
@@ -48,31 +53,16 @@ namespace webapi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutVatsimMETAR(string id, VatsimMETAR vatsimMETAR)
+        public IActionResult PutVatsimMETAR(string id, VatsimMETAR vatsimMETAR)
         {
-            if (id != vatsimMETAR.RetreivedTimeStamp)
+
+            if (id != vatsimMETAR.ICAO)
             {
                 return BadRequest();
             }
-
-            _context.Entry(vatsimMETAR).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
+            else {
+                _unitOfWork.METARs.Update(vatsimMETAR);
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!VatsimMETARExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
             return NoContent();
         }
 
@@ -82,14 +72,13 @@ namespace webapi.Controllers
         [HttpPost]
         public async Task<ActionResult<VatsimMETAR>> PostVatsimMETAR(VatsimMETAR vatsimMETAR)
         {
-            _context.VatsimMETAR.Add(vatsimMETAR);
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.METARs.Add(vatsimMETAR);
             }
-            catch (DbUpdateException)
+            catch (Exception)
             {
-                if (VatsimMETARExists(vatsimMETAR.RetreivedTimeStamp))
+                if (await VatsimMETARExists(vatsimMETAR.ICAO))
                 {
                     return Conflict();
                 }
@@ -99,28 +88,30 @@ namespace webapi.Controllers
                 }
             }
 
-            return CreatedAtAction("GetVatsimMETAR", new { id = vatsimMETAR.RetreivedTimeStamp }, vatsimMETAR);
+            return CreatedAtAction("GetVatsimMETAR", new { id = vatsimMETAR.RetreivedTimeStamp }, vatsimMETAR);            
         }
 
         // DELETE: api/VatsimMETAR/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<VatsimMETAR>> DeleteVatsimMETAR(string id)
         {
-            var vatsimMETAR = await _context.VatsimMETAR.FindAsync(id);
-            if (vatsimMETAR == null)
+
+            var vatsimMetar = await _unitOfWork.METARs.Get(id);
+            
+            if (vatsimMetar == null)
             {
                 return NotFound();
             }
 
-            _context.VatsimMETAR.Remove(vatsimMETAR);
-            await _context.SaveChangesAsync();
+            //do deletion
+            _unitOfWork.METARs.Delete(vatsimMetar);
 
-            return vatsimMETAR;
+            return vatsimMetar;
         }
 
-        private bool VatsimMETARExists(string id)
+        private async Task<bool> VatsimMETARExists(string id)
         {
-            return _context.VatsimMETAR.Any(e => e.RetreivedTimeStamp == id);
+            return await _unitOfWork.METARs.Get(id) != null;
         }
     }
 }

@@ -1,133 +1,117 @@
-// using System;
-// using System.Collections.Generic;
-// using System.Linq;
-// using System.Threading.Tasks;
-// using Microsoft.AspNetCore.Http;
-// using Microsoft.AspNetCore.Mvc;
-// using Microsoft.EntityFrameworkCore;
-// using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-// using domain;
-// using domain.NOAAStationAggregate;
-// using repository;
+using domain;
+using domain.NOAAStationAggregate;
+using repository;
 
-// namespace webapi.Controllers
-// {
-//     [Route("api/[controller]")]
-//     [ApiController]
-//     public class NOAAStationsController : ControllerBase
-//     {
-//         private readonly ILogger<NOAAStationsController> _logger;
-//         private readonly IUnitOfWork _unitOfWork;
+namespace webapi.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class NOAAStationsController : ControllerBase
+    {
+        private readonly ILogger<NOAAStationsController> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-//         public NOAAStationsController(ILogger<NOAAStationsController> logger,
-//                                       IUnitOfWork unitOfWork)
+        public NOAAStationsController(ILogger<NOAAStationsController> logger,
+                                      IUnitOfWork unitOfWork)
 
-//         {
-//             _logger = logger;
-//             _unitOfWork = unitOfWork;
-//         }
+        {
+            _logger = logger;
+            _unitOfWork = unitOfWork;
+        }
 
-//         // GET: api/NOAAStations
-//         // [HttpGet]
-//         // public async Task<ActionResult<IEnumerable<NOAAStation>>> GetStations()
-//         // {
-//         //     _logger.LogInformation("VatsimMETAR Called");
-//         //     return await _unitOfWork.Stations.GetAll();
-//         // }
+        // GET: api/NOAAStations
+        [HttpGet]
+        public async Task<IEnumerable<NOAAStation>> GetStations()
+        {
+            _logger.LogInformation("NOAAStation Called");
+            return await _unitOfWork.Stations.GetAll();
+        }
 
-//         // GET: api/VatsimMETAR/5
-//         [HttpGet("{id}")]
-//         public async Task<ActionResult<NOAAStation>> GetMETARStation(string id)
-//         {
-//             var mETARStation = await _unitOfWork.Stations.Get(id);
-//             //var mETARStation = await _context.Stations.FindAsync(id);
+        // GET: api/VatsimMETAR/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<NOAAStation>> GetNOAAStation(string id)
+        {
+            var noaaStation = await _unitOfWork.Stations.Get(id);
+            //var mETARStation = await _context.Stations.FindAsync(id);
 
-//             if (mETARStation == null)
-//             {
-//                 return NotFound();
-//             }
+            if (noaaStation == null)
+            {
+                return NotFound();
+            }
 
-//             return mETARStation;
-//         }
+            return noaaStation;
+        }
 
-//         // PUT: api/VatsimMETAR/5
-//         // To protect from overposting attacks, enable the specific properties you want to bind to, for
-//         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-//         [HttpPut("{id}")]
-//         public async Task<IActionResult> PutMETARStation(string id, NOAAStation mETARStation)
-//         {
-//             if (id != mETARStation.ICAO)
-//             {
-//                 return BadRequest();
-//             }
+        // PUT: api/VatsimMETAR/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPut("{id}")]
+        public IActionResult PutNOAAStation(string id, NOAAStation noaaStation)
+        {
+            if (id != noaaStation.ICAO)
+            {
+                return BadRequest();
+            }
+            else {
+                _unitOfWork.Stations.Update(noaaStation);
+            }
+            return NoContent();
+        }
 
-//             //_context.Entry(mETARStation).State = EntityState.Modified;
+        // POST: api/VatsimMETAR
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPost]
+        public async Task<ActionResult<NOAAStation>> PostNOAAStation(NOAAStation noaaStation)
+        {
+            try
+            {
+                await _unitOfWork.Stations.Add(noaaStation);
+            }
+            catch (Exception)
+            {
+                if (await NOAAStationExists(noaaStation.ICAO))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-//             try
-//             {
-//                 //await _context.SaveChangesAsync();
-//             }
-//             catch (DbUpdateConcurrencyException)
-//             {
-//                 if (!METARStationExists(id))
-//                 {
-//                     return NotFound();
-//                 }
-//                 else
-//                 {
-//                     throw;
-//                 }
-//             }
+            return CreatedAtAction("GetMETARStation", new { id = noaaStation.ICAO }, noaaStation);
+        }
 
-//             return NoContent();
-//         }
+        // DELETE: api/VatsimMETAR/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<NOAAStation>> DeleteNOAAStation(string id)
+        {
+            var noaaStation = await _unitOfWork.Stations.Get(id);
+            
+            if (noaaStation == null)
+            {
+                return NotFound();
+            }
 
-//         // POST: api/VatsimMETAR
-//         // To protect from overposting attacks, enable the specific properties you want to bind to, for
-//         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-//         [HttpPost]
-//         public async Task<ActionResult<NOAAStation>> PostMETARStation(NOAAStation mETARStation)
-//         {
-//             //_context.Stations.Add(mETARStation);
-//             try
-//             {
-//                 //await _context.SaveChangesAsync();
-//             }
-//             catch (DbUpdateException)
-//             {
-//                 if (METARStationExists(mETARStation.ICAO))
-//                 {
-//                     return Conflict();
-//                 }
-//                 else
-//                 {
-//                     throw;
-//                 }
-//             }
+            //do deletion
+            _unitOfWork.Stations.Delete(noaaStation);
 
-//             return CreatedAtAction("GetMETARStation", new { id = mETARStation.ICAO }, mETARStation);
-//         }
+            return noaaStation;
+        }
 
-//         // DELETE: api/VatsimMETAR/5
-//         [HttpDelete("{id}")]
-//         public async Task<ActionResult<NOAAStation>> DeleteMETARStation(string id)
-//         {
-//             //var mETARStation = await _context.Stations.FindAsync(id);
-//             if (mETARStation == null)
-//             {
-//                 return NotFound();
-//             }
-
-//             //_context.Stations.Remove(mETARStation);
-//             await _context.SaveChangesAsync();
-
-//             return mETARStation;
-//         }
-
-//         private bool METARStationExists(string id)
-//         {
-//             return _context.Stations.Any(e => e.ICAO == id);
-//         }
-//     }
-// }
+        private async Task<bool> NOAAStationExists(string id)
+        {
+            return await _unitOfWork.Stations.Get(id) != null;
+        }
+    }
+}

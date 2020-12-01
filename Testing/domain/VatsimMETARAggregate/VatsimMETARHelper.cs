@@ -47,8 +47,10 @@ namespace domain.VatsimMETARAggregate
             string minute = "";                                            
 
             if(mc.Count > 0){
-                Console.WriteLine($"MATCH FOUND! {mc[0]}");
-
+                
+                Console.WriteLine($"MATCH! {mc[0]}");
+                
+                // just take the first match
                 string zuluTimestamp = mc[0].ToString();
 
                 day = ParseDayFromMETARZuluTimeStamp(zuluTimestamp);
@@ -59,7 +61,7 @@ namespace domain.VatsimMETARAggregate
 
                 return new DateTime(DateTime.UtcNow.Year,       //year
                                     DateTime.UtcNow.Month,      //month
-                                    DateTime.UtcNow.Day,        //day
+                                    Convert.ToInt32(day),       //day
                                     Convert.ToInt32(hour),      //hour utc
                                     Convert.ToInt32(minute),    //minute utc
                                     0);                         //second utc
