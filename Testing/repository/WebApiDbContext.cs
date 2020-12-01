@@ -1,18 +1,21 @@
+using System;
 using Microsoft.EntityFrameworkCore;
-using webapi.Models;
+using domain;
+using domain.NOAAStationAggregate;
+using domain.VatsimMETARAggregate;
 
-namespace webapi.Data
+namespace repository
 {
-    public class WebApiDbContext_OFF : DbContext
+    public class WebApiDbContext : DbContext
     {
-        public WebApiDbContext_OFF (DbContextOptions<WebApiDbContext_OFF> options)
+        public WebApiDbContext (DbContextOptions<WebApiDbContext> options)
             : base(options)
         {
         }
 
         public DbSet<NOAAStation> Stations { get; set; }
 
-        public DbSet<webapi.Models.VatsimMETAR> VatsimMETAR { get; set; }
+        public DbSet<VatsimMETAR> VatsimMETAR { get; set; }
 
         // public DbSet<Student> Students { get; set; }
         // public DbSet<Enrollment> Enrollments { get; set; }

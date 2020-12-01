@@ -11,6 +11,11 @@ namespace domain.NOAAStationAggregate
         public string SynopticNumber { get; set; }
         public string Latitude { get; set; }
         public string Longitude { get; set; }
-        public string Elevation { get; set; }        
+        public string Elevation { get; set; }
+
+        public override string ToString()
+        {
+            return $"ICAO: {this.ICAO} - IATA: {this.IATA}";
+        }
     }
 }

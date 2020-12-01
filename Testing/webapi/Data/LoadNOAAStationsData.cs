@@ -5,14 +5,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using webapi.Models;
+using domain;
+using domain.NOAAStationAggregate;
+using repository;
+
 
 /* helpful: 
     https://exceptionnotfound.net/ef-core-inmemory-asp-net-core-store-database/ 
     https://github.com/exceptionnotfound/InMemoryEFCoreDemo
 */
 namespace webapi.Data{
-    public class LoadMetarData
+    public class LoadNOAAStationsData
     {
         public static void Initialize(IServiceProvider serviceProvider)
         {
@@ -27,7 +30,7 @@ namespace webapi.Data{
                 }
 
                 Console.WriteLine($"READING FROM STATIONS");
-                List<NOAAStation> stationList = NOAAStation.GetNOAAStationsList();
+                List<NOAAStation> stationList = NOAAStationHelper.GetNOAAStationsList();
 
                 Console.WriteLine($"FINDING DUPLICATES");
                 // as it turns out, there are duplicates in the data

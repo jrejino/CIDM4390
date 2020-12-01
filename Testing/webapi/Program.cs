@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using webapi.Data;
-using webapi.Models;
+using repository;
 
 namespace webapi
 {
@@ -33,7 +33,7 @@ namespace webapi
             {
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<WebApiDbContext>();
-                LoadMetarData.Initialize(services);
+                LoadNOAAStationsData.Initialize(services);
             }
         }
 

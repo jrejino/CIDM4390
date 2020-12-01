@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace domain.VatsimMETARAggregate
+﻿namespace domain.VatsimMETARAggregate
 {
-    public interface IVatsimMETARRepository
+    public interface IVatsimMETARRepository : IGenericRepository<VatsimMETAR>
     {
     }
 }

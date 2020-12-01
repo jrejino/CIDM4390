@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using webapi.Data;
-using webapi.Models;
+
+using domain;
+using domain.VatsimMETARAggregate;
+using repository;
 
 namespace webapi.Controllers
 {
@@ -25,7 +27,7 @@ namespace webapi.Controllers
         // GET: api/VatsimMETARApi/KDFW
         [HttpGet("{icao}")]
         public async Task<ActionResult<VatsimMETAR>> GetVatsimMetarFromICAO(string icao) {
-            var vatsimMETAR = await VatsimMETAR.GetVatsimMETARFromIDAsync(icao);
+            var vatsimMETAR = await VatsimMETARHelper.GetVatsimMETARFromIDAsync(icao);
 
             if(vatsimMETAR == null)
             {

@@ -21,6 +21,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\webapi\webapi.csproj" />
+    <ProjectReference Include="..\domain\domain.csproj" />
+    <ProjectReference Include="..\repository\repository.csproj" />
   </ItemGroup>
 
 </Project>

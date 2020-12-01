@@ -2,7 +2,7 @@ using System;
 using domain.NOAAStationAggregate;
 using domain.VatsimMETARAggregate;
 
-namespace BookStore.Domain
+namespace domain
 {
     public interface IUnitOfWork : IDisposable
     {

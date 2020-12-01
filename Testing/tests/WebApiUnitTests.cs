@@ -1,7 +1,8 @@
 using System;
 using Xunit;
 using Xunit.Abstractions;
-using webapi.Models;
+using domain.NOAAStationAggregate;
+using domain.VatsimMETARAggregate;
 
 namespace tests
 {
@@ -36,7 +37,7 @@ namespace tests
             outputHelper.WriteLine($"testing: {example}");
 
             //Act
-            DateTime obs = VatsimMETAR.ParseObservationTimeFromString(testMetar);
+            DateTime obs = VatsimMETARHelper.ParseObservationTimeFromString(testMetar);
 
             //Assert
             Assert.Equal(example, obs);
@@ -50,7 +51,7 @@ namespace tests
             string testTimeStamp = "301653Z";
 
             //Act
-            string day = VatsimMETAR.ParseDayFromMETARZuluTimeStamp(testTimeStamp);
+            string day = VatsimMETARHelper.ParseDayFromMETARZuluTimeStamp(testTimeStamp);
 
             //Assert
             Assert.Equal("30", day);
@@ -65,7 +66,7 @@ namespace tests
             string testTimeStamp = "301653Z";
 
             //Act
-            string hour = VatsimMETAR.ParseHourFromMETARZuluTimeStamp(testTimeStamp);
+            string hour = VatsimMETARHelper.ParseHourFromMETARZuluTimeStamp(testTimeStamp);
 
             //Assert
             Assert.Equal("16", hour);
@@ -80,7 +81,7 @@ namespace tests
             string testTimeStamp = "301653Z";
 
             //Act
-            string minute = VatsimMETAR.ParseMinuteFromMETARZuluTimeStamp(testTimeStamp);
+            string minute = VatsimMETARHelper.ParseMinuteFromMETARZuluTimeStamp(testTimeStamp);
 
             //Assert
             Assert.Equal("53", minute);

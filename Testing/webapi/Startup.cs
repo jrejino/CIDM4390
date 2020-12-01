@@ -11,8 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using Microsoft.EntityFrameworkCore;
-using webapi.Models;
-using webapi.Data;
+using repository;
 
 namespace webapi
 {

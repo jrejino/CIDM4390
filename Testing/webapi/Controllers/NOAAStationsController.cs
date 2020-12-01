@@ -7,8 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-using webapi.Models;
-using webapi.Data;
+using domain;
+using domain.NOAAStationAggregate;
+using repository;
 
 namespace webapi.Controllers
 {
@@ -17,28 +18,30 @@ namespace webapi.Controllers
     public class NOAAStationsController : ControllerBase
     {
         private readonly ILogger<NOAAStationsController> _logger;
-        private readonly WebApiDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
         public NOAAStationsController(ILogger<NOAAStationsController> logger,
-                                     WebApiDbContext context)
+                                      IUnitOfWork unitOfWork)
+
         {
             _logger = logger;
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
-        // GET: api/VatsimMETAR
+        // GET: api/NOAAStations
         [HttpGet]
         public async Task<ActionResult<IEnumerable<NOAAStation>>> GetStations()
         {
             _logger.LogInformation("VatsimMETAR Called");
-            return await _context.Stations.ToListAsync();
+            return await _unitOfWork.Stations.GetAll();
         }
 
         // GET: api/VatsimMETAR/5
         [HttpGet("{id}")]
         public async Task<ActionResult<NOAAStation>> GetMETARStation(string id)
         {
-            var mETARStation = await _context.Stations.FindAsync(id);
+            var mETARStation = await _unitOfWork.Stations.Get(id);
+            //var mETARStation = await _context.Stations.FindAsync(id);
 
             if (mETARStation == null)
             {

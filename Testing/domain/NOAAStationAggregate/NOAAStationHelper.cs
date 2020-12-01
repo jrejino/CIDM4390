@@ -1,19 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
-using Microsoft.EntityFrameworkCore;
 
 namespace domain.NOAAStationAggregate
 {
 
-    public class NOAAStation
+    public class NOAAStationHelper
     {
 
         public static readonly string NOAA_STATION_SOURCE_URL = "https://aviationweather.gov/docs/metar/stations.txt";
@@ -38,7 +32,7 @@ namespace domain.NOAAStationAggregate
             {
                 if(line.Length == 83)
                 {
-                    NOAAStation sta = NOAAStation.ParseStationLine(line);
+                    NOAAStation sta = NOAAStationHelper.ParseStationLine(line);
                     if(sta.ICAO.Length == 4)
                     {
                         if(!stationsList.Contains(sta))
@@ -74,11 +68,6 @@ namespace domain.NOAAStationAggregate
             output += $"lon:{lon}|";
             string elevation = line.Substring(54, 5).Trim();
             output += $"elevation:{elevation}|";
-
-            // Console.WriteLine($"{output}");
-            // if(icao.Length == 0){
-            //     icao = iata;
-            // }
 
             NOAAStation sta = new NOAAStation {
                 StateAbbreviation = cd,
@@ -121,10 +110,5 @@ namespace domain.NOAAStationAggregate
 
             return skip;
         }
-
-        public override string ToString()
-        {
-            return $"ICAO: {this.ICAO} - IATA: {this.IATA}";
-        }
-    }
+   }
 }
